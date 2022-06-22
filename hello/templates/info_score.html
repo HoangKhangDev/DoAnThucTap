@@ -1,0 +1,473 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Info Score
+{% endblock %}
+
+{% block header %}
+
+<!-- Back to top button -->
+<div class="back-to-top" style="animation-duration: 3s" onclick=" document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;"></div>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-white sticky" data-offset="500">
+    <div class="container">
+        <a href="{% url 'index' %}" id="logo" class="navbar-brand">
+            Scoring
+            <span class="text-primary">Training.</span>
+        </a>
+
+        <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent"
+            aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="navbar-collapse collapse" id="navbarContent">
+            <ul class="navbar-nav ml-auto">
+                {% if sinhvien %}
+                <li class="nav-item ">
+                    <a class="nav-link" href="{% url 'index' %}">Home</a>
+                </li>
+                {% endif %}
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'info_score' %}">Info Score</a>
+                </li>
+                {% if sinhvien %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'score_training' %}">Score Training</a>
+                </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'contact' %}">Contact</a>
+                </li>
+
+                <li class="nav-item ml-2 d-flex align-items-center" id="info-login-nav">
+                    <div>
+                        <span style="font-weight: bold;">Xin Chào <p style="
+                  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                  font-weight: bold;color: #6C7AFB;
+                ">
+                                {% if sinhvien %}
+                                <b>{{sinhvien.Ten_SV}}</b>
+                                {% elif hoidongdanhgia %}
+                                <b>Hội Đồng Đánh Giá</b>
+                                {% else %}
+                                <b>Cố Vấn Học Tập ({{ covanhoctap.Ten_CVHT}}</b>
+                                {% endif %}
+                            </p>
+                    </div>
+                    <div class="dropdown show">
+                        {% if image %}
+                        <img class="rounded-circle z-depth-2 dropdown-toggle" alt="100x100" src="{{ image }}"
+                            data-holder-rendered="true" data-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false" />
+                        {% else %}
+                        <img class="rounded-circle z-depth-2 dropdown-toggle" alt="100x100"
+                            src="{% static 'images/Robot.png' %}" data-holder-rendered="true" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false" />
+                        {% endif %}
+                        <div class="dropdown-menu option-image-login" aria-labelledby="dropdownMenuLink">
+                            <a class="dropdown-item" href="{% url 'info_score' %}">Thông Tin</a>
+                            <a class="dropdown-item"
+                                onclick="document.getElementById('form-change-password').classList.toggle('d-none')">Đổi
+                                Mật Khẩu</a>
+                            <a class="dropdown-item" href="{% url 'logout' %}">Đăng Xuất</a>
+                        </div>
+                    </div>
+
+                </li>
+
+        </div>
+        </ul>
+    </div>
+    </div>
+</nav>
+
+
+<!-- form change password -->
+<div style="position: absolute;background-color: rgba(0,0,0,0.95);top: 0;right: 0;bottom: 0;left: 0;z-index: 999999;height: 100%;"
+    id="form-change-password" class="d-none">
+    <div style="position: absolute;top: 50%;left: 50%;width: 45vw;z-index: 1;transform: translate(-50%,-50%);background-color: #6C7AFB;color: white"
+        class="p-5">
+        <form id="form_change_password" method="post" action="{% url 'change_password' %}">
+            {% csrf_token %}
+            <div class="d-flex justify-content-end col-12">
+                <i class="fa fa-window-close btn btn-danger text-white m-0" aria-hidden="true"
+                    style="padding:0 0.5em 0;"
+                    onclick="document.getElementById('form-change-password').classList.toggle('d-none')"></i>
+            </div>
+            <div class="form-group">
+                <label for="formGroupExampleInput">Mật Khẩu Hiện Tại</label>
+                <input type="password" class="form-control" id="formGroupExampleInput" placeholder="Mật Khẩu Hiện Tại">
+            </div>
+            <div class="form-group">
+                <label for="formGroupExampleInput2">Mật Khẩu Mới</label>
+                <input type="password" class="form-control" id="formGroupExampleInput2" placeholder="Mật Khẩu Mới"
+                    name="password">
+            </div>
+            <div class="form-group">
+                <label for="formGroupExampleInput2">Nhập lại mật khẩu mới</label>
+                <input type="password" class="form-control" id="formGroupExampleInput3"
+                    placeholder="Nhập lại mật khẩu mới">
+            </div>
+            <input hidden name='link' value="/info_score">
+        </form>
+        <input class="btn btn-warning" type="button" value="Save" onclick="submitformpassword()">
+    </div>
+</div>
+<script>
+    function submitformpassword() {
+        var passnow = document.getElementById('formGroupExampleInput');
+        var passnew = document.getElementById('formGroupExampleInput2');
+        var passnewre = document.getElementById('formGroupExampleInput3');
+        if (passnow != null & passnew != null & passnewre != null) {
+            passnow = passnow.value
+            passnew = passnew.value
+            passnewre = passnewre.value
+            if (passnow.trim().length > 0 & passnew.trim().length > 0 & passnewre.trim().length > 0 & passnow.trim() != passnew.trim() & passnewre.trim() == passnew.trim() & passnow.trim() == '{{sinhvien.Password_SV}}') {
+                alert('Change Password Succes!!!');
+                document.getElementById('form_change_password').submit();
+            }
+            else {
+                alert('Please Check again input password')
+            }
+        }
+        else {
+            alert('Please Check again input password')
+        }
+    }
+</script>
+<!-- end form change password -->
+{% endblock %}
+
+
+{% block body %}
+
+<div class="container p-3">
+
+
+    <div class="main-body">
+        <!-- Breadcrumb -->
+
+        <!-- /Breadcrumb -->
+        {% if sinhvien %}
+        <div class="row gutters-sm">
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex flex-column align-items-center text-center">
+                            <img src="{{ image }}" alt="Admin" width="150" class="shadow rounded" />
+                            <div class="mt-3">
+                                <h4>{{sinhvien.Ten_SV}}</h4>
+                                <p class="text-secondary mb-1">{{sinhvien.ChucVu_SV}}</p>
+                                <!-- <p class="text-muted font-size-sm">
+                                    Bay Area, San Francisco, CA
+                                </p> -->
+                                <button class="btn btn-primary"
+                                    onclick="document.getElementById('form-change-password').classList.toggle('d-none')">
+                                    Change Password
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Mã Số Sinh Viên</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary text-center">{{sinhvien.Ma_SV}}</div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Sinh Viên</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary text-center">{{sinhvien.Ten_SV}}</div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Ngày Sinh</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary text-center">{{sinhvien.NgaySinh_SV}}</div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Số Điện Thoại</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary text-center">{{sinhvien.SDT_SV}}</div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Email</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary text-center">{{sinhvien.Email_SV}}</div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Địa Chỉ</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary text-center">
+                                {{sinhvien.DiaChi_SV}}
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Chức Vụ</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary text-center">
+                                {{sinhvien.ChucVu_SV}}
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Lớp</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary text-center">
+                                {{sinhvien.lop}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+{% if hoidongdanhgia %}
+<div class="container-fluid d-flex" style="width:70vw">
+    <form action="{% url 'search_score' %}" class=" col-6" method="post">
+
+        <div class="input-group m-1">
+            {% csrf_token %}
+            <input type="text" class="form-control" placeholder="Nhập Sinh Viên..." name="key_search">
+            <div class="input-group-append">
+                <button class="btn btn-success" type="submit">Tìm Kiếm</button>
+            </div>
+
+        </div>
+    </form>
+
+    <!-- <div class="input-group m-1">
+        <div class="input-group-append">
+            <button class="btn btn-success" type="submit">Lọc</button>
+        </div>
+        <select class="custom-select">
+            <option selected>Lọc Theo</option>
+            <option value="1">Tên</option>
+            <option value="2">Lớp</option>
+            <option value="3">Ngày</option>
+        </select>
+    </div> -->
+    {% if khoas %}
+    <div class="ml-2 col-6 d-flex align-items-center justify-content-around">
+        <select class="custom-select my-1 mr-sm-2 btn btn-info" id="inlineFormCustomSelectPref" style="width: auto">
+            {% for khoa in khoas %}
+            <option value="{{khoa}}">{{khoa.Ten_Khoa}}</option>
+            {% endfor %}
+        </select>
+
+        <div class="dropdown-toggle-split dropright">
+            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" onclick="
+                var check=this.parentNode.parentNode.children[1].children[1].children;
+                for (var i=0; i<check.length; i++){
+                   
+                     if(this.parentNode.parentNode.children[0].value!=check[i].name){
+                        check[i].classList.toggle('d-none');
+                     }
+                     else{
+                        if( check[i].classList.toString().includes('d-none')){
+                            check[i].classList.toggle('d-none');
+                        }
+
+                     }
+                }
+               ;">
+                Lớp
+            </button>
+            <div class="dropdown-menu">
+                {% for khoa in khoas %}
+                {% for lop in lops %}
+                {% if lop.khoa == khoa %}
+                <a class="dropdown-item" name="{{khoa}}" href="{% url 'filter_lop' lop.Ma_Lop %}">{{lop}}</a>
+                {% endif %}
+                {% endfor %}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        <div class="dropdown-toggle-split dropleft">
+            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                Sắp Xếp
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="{% url 'filter' 'name_az' %}">Sắp Xếp Theo Tên (a-z)</a>
+                <a class="dropdown-item" href="{% url 'filter' 'name_za' %}">Sắp Xếp Theo Tên (z-a)</a>
+                <a class="dropdown-item" href="{% url 'filter' 'id_az' %}">Sắp Xếp Theo ID (a-z)</a>
+                <a class="dropdown-item" href="{% url 'filter' 'id_za' %}">Sắp Xếp Theo ID (z-a)</a>
+                <a class="dropdown-item" href="{% url 'filter' 'score_az' %}">Sắp Xếp Theo Điểm (a-z)</a>
+                <a class="dropdown-item" href="{% url 'filter' 'score_za' %}">Sắp Xếp Theo Điểm (z-a)</a>
+                <a class="dropdown-item" href="{% url 'filter' 'date_az' %}">Sắp Xếp Theo Ngày (a-z)</a>
+                <a class="dropdown-item" href="{% url 'filter' 'date_za' %}">Sắp Xếp Theo Ngày (z-a)</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+</div>
+
+
+{% endif %}
+<div class="px-3 mb-3 container-fluid d-flex justify-content-center">
+
+    <h1 class="bg-danger text-white d-none" id="thongbaoerrortable" ;>Không Có Bất Kì Phiếu Chấm Điểm Nào Xin vui
+        lòng
+        kiểm tra lại.</h1>
+    <!-- table display Score -->
+    <table class="table table-hover table-dark mb-5 rounded shadow text-center" style="width:70vw"
+        id="table-scoreinfor">
+        <thead>
+            <tr>
+
+                <th {% if sinhvien %} colspan="4" {% else %} colspan="6" {% endif %}
+                    class="table table-primary text-white " style="text-align:center;">
+                    <h3><b>Bảng Phiếu Điểm
+                            {% if key_search %}
+                            {{key_search}}
+                            {% endif %}
+                        </b></h3>
+                </th>
+                <th class="table-primary">
+                    <form action="{% url 'export_to_csv' %}" method="post">
+                        {% csrf_token %}
+                        <input hidden id="data_export" name="data">
+                        <input hidden name="tenbang">
+
+                    </form>
+                    <button class="btn-success btn {% if sinhvien %} d-none {% endif %}" style="font-size: 0.75em" onclick="
+                        var data_id= document.getElementById('tbody-inforscore').children;
+                        var data=[];
+                        for (var i=0; i<data_id.length; i++){
+                            data.push(data_id[i].children[0].innerText);
+                        }
+                        this.parentNode.children[0].children[1].value=JSON.stringify(data);
+                        this.parentNode.children[0].children[2].value=this.parentNode.parentNode.children[0].children[0].children[0].innerText;
+                        this.parentNode.children[0].submit();
+                        
+                        ">Export
+                        Excel</button>
+
+                </th>
+
+            </tr>
+            <tr>
+                <th scope="col">ID</th>
+                {% if covanhoctap or hoidongdanhgia %}
+                <th scope="col">Sinh Viên</th>
+                {% endif %}
+                <th scope="col">Ngày Lập</th>
+                <th scope="col">Số Điểm</th>
+                <th scope="col">Xếp Loại</th>
+                <th scope="col">Chức năng</th>
+                {% if covanhoctap or hoidongdanhgia %}
+                <th scope="col">Đã Chấm</th>
+                {% endif %}
+
+            </tr>
+        </thead>
+        <tbody id="tbody-inforscore">
+            {% for chitietphieudiem in chitietphieudiems %}
+            {% for phieuchamdiem in phieuchamdiems %}
+            {% if chitietphieudiem.pcd == phieuchamdiem %}
+            <tr>
+                <th scope="row">
+                    {{phieuchamdiem.Ma_PCD}}
+                </th>
+                {% if covanhoctap or hoidongdanhgia %}
+                <td>{{chitietphieudiem.sinhvien}}</td>
+                {% endif %}
+                <td>{{phieuchamdiem.NgayLap_PCD}}</td>
+                <td>{{phieuchamdiem.DiemTong}}</td>
+                <td>{{phieuchamdiem.XepLoai}}</td>
+                <td>
+                    {% if sinhvien %}
+                    <a href="{% url 'view_scoretraining' chitietphieudiem.Ma_CTPD %}" style="color:cyan"><i
+                            class="fa fa-eye" aria-hidden="true"></i>
+                    </a>
+                    {% else %}
+                    <a href="{% url 'view_scoretraining' chitietphieudiem.Ma_CTPD %}" style="color:cyan"><i
+                            class="fa fa-eye" aria-hidden="true"></i>
+                    </a>
+                    <a href="{% url 'edit_scoretraining' chitietphieudiem.Ma_CTPD %}" style="color:cyan"><i
+                            class="fa fa-pencil-square" aria-hidden="true"></i>
+                    </a>
+                    {% if hoidongdanhgia %}
+
+                    <a href="{% url 'delete_scoretraining' chitietphieudiem.Ma_CTPD %}" style="color:cyan"
+                        onclick="aler_delete(this,'{{hitietphieudiem.Ma_CTPD}}')"><i class="fa fa-trash"
+                            aria-hidden="true"></i>
+                    </a>
+
+                    {% endif %}
+                    {% endif %}
+                    {% if hoidongdanhgia %}
+                <td>
+                    {% if chitietphieudiem.hoidongdanhgia == hoidongdanhgia %}
+                    <i class="fa fa-check-square " style="color:green" aria-hidden="true"></i>
+                    {% endif %}
+                </td>
+                {% elif covanhoctap %}
+                {% if chitietphieudiem.covanhoctap == covanhoctap %}
+                <td>
+                    <i class="fa fa-check-square " style="color:green" aria-hidden="true"></i>
+                </td>
+                {% endif %}
+                {% endif %}
+            </tr>
+            {% endif %}
+            {% endfor %}
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- end table display Score -->
+
+</div>
+
+<script>
+    tbody = document.querySelector('#tbody-inforscore');
+    // console.log(new DateTime(tbody.children[0].children[2].innerText));
+    console.log(tbody.children.length)
+    if (tbody.children.length == 0) {
+        document.querySelector('#table-scoreinfor').classList.add('d-none')
+
+        {% if covanhoctap or hoidongdanhgia %}
+        document.querySelector('#thongbaoerrortable').classList.remove('d-none')
+        document.querySelector('#thongbaoerrortable').setAttribute('style', 'margin-bottom:20vh')
+        {% endif %}
+
+        //     var datetime= tbody.children[0].children[2].value
+        //     tbody.children.children[2].value= `${datetime.getDate()}`
+    }
+    function aler_delete(i, e) {
+        let text = `Error! Thao tác này sẽ xoá phiếu chẩm điểm có mã phiếu ${e}! Bạn có muốn xoá???`;
+        i.preventDefault();
+        if (confirm(text) == true) {
+            i.submit()
+        }
+    }
+
+</script>
+
+{% endblock %}

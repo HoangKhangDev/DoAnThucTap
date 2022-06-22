@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block header %}
+
+<!-- Back to top button -->
+<div class="back-to-top" style="animation-duration: 3s" onclick=" document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;"></div>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-white sticky" data-offset="500">
+  <div class="container">
+    <a href="{% url 'index' %}" id="logo" class="navbar-brand">
+      Scoring
+      <span class="text-primary">Training.</span>
+    </a>
+
+    <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent"
+      aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="navbar-collapse collapse" id="navbarContent">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="{% url 'index' %}">Home</a>
+        </li>
+        <li class="nav-item ">
+          <a class="nav-link" href="{% url 'info_score' %}">Info Score</a>
+        </li>
+        {% if sinhvien %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'score_training' %}">Score Training</a>
+        </li>
+        {% endif %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'contact' %}">Contact</a>
+        </li>
+
+        <li class="nav-item ml-2 d-flex align-items-center" id="info-login-nav">
+          <div>
+            <span style="font-weight: bold;">Xin Chào <p style="
+                  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                  font-weight: bold;color: #6C7AFB;
+                ">
+                {% if sinhvien %}
+                <b>{{sinhvien.Ten_SV}}</b>
+                {% elif hoidongdanhgia %}
+                <b>Hội Đồng Đánh Giá</b>
+                {% else %}
+                <b>Cố Vấn Học Tập ({{ covanhoctap.Ten_CVHT}}</b>
+                {% endif %}
+              </p>
+          </div>
+          <div class="dropdown show">
+            {% if image %}
+            <img class="rounded-circle z-depth-2 dropdown-toggle" alt="image Not found" src="{{ image }}"
+              data-holder-rendered="true" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
+            {% else %}
+            <img class="rounded-circle z-depth-2 dropdown-toggle" alt="100x100" src="{% static 'images/Robot.png' %}"
+              data-holder-rendered="true" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
+            {% endif %}
+            <div class="dropdown-menu option-image-login" aria-labelledby="dropdownMenuLink">
+              <a class="dropdown-item" href="{% url 'info_score' %}">Thông Tin</a>
+              <a class="dropdown-item"
+                onclick="document.getElementById('form-change-password').classList.toggle('d-none')">Đổi
+                Mật Khẩu</a>
+              <a class="dropdown-item" href="{% url 'logout' %}">Đăng Xuất</a>
+            </div>
+          </div>
+
+        </li>
+
+    </div>
+    </ul>
+  </div>
+  </div>
+</nav>
+
+
+<!-- form change password -->
+<div
+  style="position: absolute;background-color: rgba(0,0,0,0.95);top: 0;right: 0;bottom: 0;left: 0;z-index: 999999;height: 100%;"
+  id="form-change-password" class="d-none">
+  <div
+    style="position: absolute;top: 50%;left: 50%;width: 45vw;z-index: 1;transform: translate(-50%,-50%);background-color: #6C7AFB;color: white"
+    class="p-5">
+    <form id="form_change_password" method="post" action="{% url 'change_password' %}">
+      {% csrf_token %}
+      <div class="d-flex justify-content-end col-12">
+        <i class="fa fa-window-close btn btn-danger text-white m-0" aria-hidden="true" style="padding:0 0.5em 0;"
+          onclick="document.getElementById('form-change-password').classList.toggle('d-none')"></i>
+      </div>
+      <div class="form-group">
+        <label for="formGroupExampleInput">Mật Khẩu Hiện Tại</label>
+        <input type="password" class="form-control" id="formGroupExampleInput" placeholder="Mật Khẩu Hiện Tại">
+      </div>
+      <div class="form-group">
+        <label for="formGroupExampleInput2">Mật Khẩu Mới</label>
+        <input type="password" class="form-control" id="formGroupExampleInput2" placeholder="Mật Khẩu Mới"
+          name="password">
+      </div>
+      <div class="form-group">
+        <label for="formGroupExampleInput2">Nhập lại mật khẩu mới</label>
+        <input type="password" class="form-control" id="formGroupExampleInput3" placeholder="Nhập lại mật khẩu mới">
+      </div>
+      <input hidden name='link' value="/">
+    </form>
+    <input class="btn btn-warning" type="button" value="Save" onclick="submitformpassword()">
+  </div>
+</div>
+<script>
+  function submitformpassword() {
+    var passnow = document.getElementById('formGroupExampleInput');
+    var passnew = document.getElementById('formGroupExampleInput2');
+    var passnewre = document.getElementById('formGroupExampleInput3');
+    if (passnow != null & passnew != null & passnewre != null) {
+      passnow = passnow.value
+      passnew = passnew.value
+      passnewre = passnewre.value
+      if (passnow.trim().length > 0 & passnew.trim().length > 0 & passnewre.trim().length > 0 & passnow.trim() != passnew.trim() & passnewre.trim() == passnew.trim() & passnow.trim() == '{{sinhvien.Password_SV}}') {
+        alert('Change Password Succes!!!');
+        document.getElementById('form_change_password').submit();
+      }
+      else {
+        alert('Please Check again input password')
+      }
+    }
+    else {
+      alert('Please Check again input password')
+    }
+  }
+</script>
+<!-- end form change password -->
+{% endblock %}
+
+
+{% block body %}
+<!-- main -->
+<!-- slide -->
+<div class="container">
+  <div class="page-banner home-banner">
+    <div class="row align-items-center flex-wrap-reverse h-100">
+      <div class="col-md-6 py-5 wow fadeInLeft" style="visibility: visible; animation-name: fadeInLeft">
+        <h1 class="mb-4">Chấm Điểm Rèn Luyện với Website!</h1>
+        <p class="text-lg text-grey mb-5">
+          Chấm điểm và quản lý điểm một cách nhanh chóng
+        </p>
+        <a href="{% url 'score_training' %}" class="btn btn-primary btn-split">
+          Chấm Điểm Ngay
+          <div class="fab"><span class="mai-play"></span></div>
+        </a>
+      </div>
+      <div class="col-md-6 py-5 wow zoomIn" style="visibility: visible; animation-name: zoomIn">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- selection -->
+<div class="page-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-4 col-md-12">
+        <div class="card-service wow fadeInUp" style="visibility: visible; animation-name: fadeInUp">
+          <div class="body">
+            <h5 class="text-secondary">Info Score</h5>
+            <p>
+              Nơi này lưu trữ lại những bảng điểm mà bạn đã chấm.
+            </p>
+            <a href="{% url 'info_score' %}" class="btn btn-primary">Xem Nào</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-12">
+        <div class="card-service wow fadeInUp" style="visibility: visible; animation-name: fadeInUp">
+          <div class="body">
+            <h5 class="text-secondary">Score Training</h5>
+            <p>
+              Đây là nơi dùng để chấm điểm rèn luyện.
+            </p>
+            <a href="{% url 'score_training' %}" class="btn btn-primary">Chấm Điểm Thôi</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-12">
+        <div class="card-service wow fadeInUp" style="visibility: visible; animation-name: fadeInUp">
+          <div class="body">
+            <h5 class="text-secondary">Contact</h5>
+            <p>
+              Bạn Có thể liên hệ với tôi qua những thông tin được cung cấp ở trang này
+            </p>
+            <a href="{% url 'contact' %}" class="btn btn-primary">Liên hệ ngay</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- .container -->
+</div>
+
+{% endblock %}

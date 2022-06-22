@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Contact
+{% endblock %}
+
+{% block header %}
+
+<!-- Back to top button -->
+<div class="back-to-top" style="animation-duration: 3s" onclick=" document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;"></div>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-white sticky" data-offset="500">
+    <div class="container">
+        <a href="{% url 'index' %}" id="logo" class="navbar-brand">
+            Scoring
+            <span class="text-primary">Training.</span>
+        </a>
+
+        <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent"
+            aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="navbar-collapse collapse" id="navbarContent">
+            <ul class="navbar-nav ml-auto">
+                {% if sinhvien %}
+                <li class="nav-item ">
+                    <a class="nav-link" href="{% url 'index' %}">Home</a>
+                </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'info_score' %}">Info Score</a>
+                </li>
+            {% if sinhvien %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'score_training' %}">Score Training</a>
+            </li>
+            {% endif %}
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'contact' %}">Contact</a>
+                </li>
+
+                <li class="nav-item ml-2 d-flex align-items-center" id="info-login-nav">
+                    <div>
+                        <span style="font-weight: bold;">Xin Chào <p style="
+                  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                  font-weight: bold;color: #6C7AFB;
+                ">
+                                    {% if sinhvien %}
+                                    <b>{{sinhvien.Ten_SV}}</b>
+                                    {% elif hoidongdanhgia %}
+                                    <b>Hội Đồng Đánh Giá</b>
+                                    {% else %}
+                                    <b>Cố Vấn Học Tập ({{ covanhoctap.Ten_CVHT}}</b>
+                                    {% endif %}
+                            </p>
+                    </div>
+                    <div class="dropdown show">
+                        {% if image %}
+                        <img class="rounded-circle z-depth-2 dropdown-toggle" alt="100x100" src="{{ image }}"
+                            data-holder-rendered="true" data-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false" />
+                        {% else %}
+                        <img class="rounded-circle z-depth-2 dropdown-toggle" alt="100x100"
+                            src="{% static 'images/Robot.png' %}" data-holder-rendered="true" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false" />
+                        {% endif %}
+                        <div class="dropdown-menu option-image-login" aria-labelledby="dropdownMenuLink">
+                        <a class="dropdown-item" href="{% url 'info_score' %}">Thông Tin</a>
+                            <a class="dropdown-item"
+                                onclick="document.getElementById('form-change-password').classList.toggle('d-none')">Đổi
+                                Mật Khẩu</a>
+                            <a class="dropdown-item" href="{% url 'logout' %}">Đăng Xuất</a>
+                        </div>
+                    </div>
+
+                </li>
+
+        </div>
+        </ul>
+    </div>
+    </div>
+</nav>
+
+
+<!-- form change password -->
+<div style="position: absolute;background-color: rgba(0,0,0,0.95);top: 0;right: 0;bottom: 0;left: 0;z-index: 999999;height: 100%;"
+    id="form-change-password" class="d-none">
+    <div style="position: absolute;top: 50%;left: 50%;width: 45vw;z-index: 1;transform: translate(-50%,-50%);background-color: #6C7AFB;color: white"
+        class="p-5">
+        <form id="form_change_password" method="post" action="{% url 'change_password' %}">
+            {% csrf_token %}
+            <div class="d-flex justify-content-end col-12">
+                <i class="fa fa-window-close btn btn-danger text-white m-0" aria-hidden="true"
+                    style="padding:0 0.5em 0;"
+                    onclick="document.getElementById('form-change-password').classList.toggle('d-none')"></i>
+            </div>
+            <div class="form-group">
+                <label for="formGroupExampleInput">Mật Khẩu Hiện Tại</label>
+                <input type="password" class="form-control" id="formGroupExampleInput" placeholder="Mật Khẩu Hiện Tại">
+            </div>
+            <div class="form-group">
+                <label for="formGroupExampleInput2">Mật Khẩu Mới</label>
+                <input type="password" class="form-control" id="formGroupExampleInput2" placeholder="Mật Khẩu Mới"
+                    name="password">
+            </div>
+            <div class="form-group">
+                <label for="formGroupExampleInput2">Nhập lại mật khẩu mới</label>
+                <input type="password" class="form-control" id="formGroupExampleInput3"
+                    placeholder="Nhập lại mật khẩu mới">
+            </div>
+            <input hidden name='link' value="/contact">
+        </form>
+        <input class="btn btn-warning" type="button" value="Save" onclick="submitformpassword()">
+    </div>
+</div>
+<script>
+    function submitformpassword() {
+        var passnow = document.getElementById('formGroupExampleInput');
+        var passnew = document.getElementById('formGroupExampleInput2');
+        var passnewre = document.getElementById('formGroupExampleInput3');
+        if (passnow != null & passnew != null & passnewre != null) {
+            passnow = passnow.value
+            passnew = passnew.value
+            passnewre = passnewre.value
+            if (passnow.trim().length > 0 & passnew.trim().length > 0 & passnewre.trim().length > 0 & passnow.trim() != passnew.trim() & passnewre.trim() == passnew.trim() & passnow.trim() == '{{sinhvien.Password_SV}}') {
+                alert('Change Password Succes!!!');
+                document.getElementById('form_change_password').submit();
+            }
+            else {
+                alert('Please Check again input password')
+            }
+        }
+        else {
+            alert('Please Check again input password')
+        }
+    }
+</script>
+<!-- end form change password -->
+{% endblock %}
+
+
+
+{% block body %}
+<style>
+    a.btn-contact{
+        text-decoration: none;
+        background-color: #6C55F9;
+        color:white;
+        width: 33%;
+        padding: 10px 20px;
+    }
+    .form-contact{
+        display: flex;
+    }
+    a.btn-contact:hover{
+        background-color:white ;
+        color:#6C55F9;
+        width: 33%;
+        padding: 10px 20px;
+        outline: 1px solid #6C55F9;
+    }
+    .custom-scrollbar-css::-webkit-scrollbar-thumb {
+        border-radius: 1rem;
+        background-color: #00d2ff;
+        background-image: linear-gradient(to top, #00d2ff 0%, #3a7bd5 100%);
+    }
+    .bg--primary {
+        background-color: #F6F5FC;
+        color: #645F88;
+    }
+</style>
+
+
+<div class="scrollbar container-fluid scrollbar-info mb-3">
+    <div class="py-5 text-center bg--primary m-1">
+        <h1>Contact Me Page</h1>
+        <p>My name is Vu Hoang Khang
+            <br>
+            Currently, I am a final year student of Nam Can Tho University.
+            <br>
+            I am a developer.
+            <br>
+            I can program on Website, Mobile and Winform
+        </p>
+    </div>
+            <div class="text-center mb-2 contact">
+                <img src="{% static 'images/aboutus.jpg'%}" class="rounded mx-auto d-block mt-3 shadow-lg" style="width:calc(100%/3); height:auto"/>
+                <!-- <div class="form-contact p-2 d-flex justify-content-around">
+                        <a href="https://mail.google.com/mail/u/0/?view=cm&fs=1&tf=1&source=mailto&to=vuhoangkhang19032000kg@gmail.com" class="btn-contact" role="button" aria-pressed="true">
+                            Contact To Gmail
+                            <i class="fa-solid fa-envelope"></i>
+                         </a>
+                        <a href="https://www.facebook.com/hoangkhang2k/" class="btn-contact" role="button" aria-pressed="true">
+                            Contact To Facebook
+                            <i class="fa-brands fa-facebook"></i>
+                        </a>
+                </div> -->
+            </div>
+</div>
+
+<div class="container">
+    <div class="row text-center align-items-center">
+      <div class="col-lg-4 py-3">
+        <div class="display-4 text-center text-primary"><span class="mai-pin"></span></div>
+        <p class="mb-3 font-weight-medium text-lg">Address</p>
+        <p class="mb-0 text-secondary">70 Kinh 10A, Thanh Dong B, Tan Hiep, Kien Giang</p>
+      </div>
+      <div class="col-lg-4 py-3">
+        <div class="display-4 text-center text-primary"><span class="mai-call"></span></div>
+        <p class="mb-3 font-weight-medium text-lg">Phone</p>
+        <p class="mb-0">+84 09 2377 2376</p>
+      </div>
+      <div class="col-lg-4 py-3">
+        <div class="display-4 text-center text-primary"><span class="mai-mail"></span></div>
+        <p class="mb-3 font-weight-medium text-lg">Email Address</p>
+        <p class="mb-0"><a href="https://mail.google.com/mail/u/0/?view=cm&fs=1&tf=1&source=mailto&to=vuhoangkhang19032000kg@gmail.com" class="text-secondary">vuhoangkhang19032000kg@gmail.com</a></p>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

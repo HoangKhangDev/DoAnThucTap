@@ -1,0 +1,380 @@
+<<<<<<< HEAD
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Login
+{% endblock %}
+
+{% block body %}
+
+
+<!-- alert  -->
+<!-- ALERT -->
+
+<div class="alert alert-success container d-none" role="alert" id="alert" style="z-index: 9999999999">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+      aria-hidden="true">&times;</span></button>
+  <strong>Success!</strong> Bạn đã đăng nhập thành công!
+</div>
+
+
+<!-- alert warning -->
+
+<div id="alertForm-warning" class="container-fluid alert alert-danger fade show shadow d-none"
+  style="position: absolute;z-index: 99999999999;">
+  <strong>Login Failed!!!</strong>
+  Please Check your username and password and try again
+  <button class="close" type="button" onclick="alert_warning()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+<!-- login form -->
+<div class="container-fluid bg-white form-login" style="opacity:1;z-index: 999999999;">
+
+  <!-- form start -->
+  <form class="was-validated" method="reset" id="loginForm" action="{% url 'login' %}">
+    {% csrf_token %}
+    <h2 style="font-family: Georgia, 'Times New Roman', Times, serif;color: azure;">LOGIN</h2>
+    <div class="form-group">
+      <label for="uname">Username:</label>
+      <input type="text" class="form-control" id="uname-login" placeholder="Enter username" name="username" required />
+      <div class="valid-feedback">Valid.</div>
+      <div class="invalid-feedback">Please fill out this field.</div>
+    </div>
+    <div class="form-group">
+      <label for="pwd">Password:</label>
+      <input type="password" class="form-control" id="pwd-login" placeholder="Enter password" name="password"
+        required />
+      <div class="valid-feedback">Valid.</div>
+      <div class="invalid-feedback">Please fill out this field.</div>
+      <input hidden name="chucvu" id="chucvu">
+      <input hidden name="img" id="img">
+
+      <button type="button" class="btn btn-login mt-3" id="btn-login-form">
+        Login
+      </button>
+    </div>
+  </form>
+</div>
+
+
+<!-- end login form -->
+
+<!-- script -->
+<script>
+
+  var btn_login = document.querySelector('#btn-login-form');
+  var username = document.querySelector('#uname-login');
+  var password = document.querySelector('#pwd-login');
+  var array_user = [];
+
+  {% for sv in sinhviens %}
+  array_user.push({
+    username: '{{ sv.Ma_SV }}',
+    password: '{{ sv.Password_SV }}',
+    chucvu: 'SV',
+    image: '{{sv.Img_SV}}'
+  })
+  {% endfor %}
+  {% for hoidong in hoidongdanhgias %}
+  array_user.push({
+    username: '{{ hoidong.Ma_HDDG }}',
+    password: '{{ hoidong.Password_HDDG }}',
+    chucvu: 'HDDG',
+    image: '{{ hoidong.Img_HDDG }}',
+  })
+  {% endfor %}
+  {% for cvht in covanhoctaps %}
+  array_user.push({
+    username: '{{ cvht.Ma_CVHT }}',
+    password: '{{ cvht.Password_CVHT }}',
+    chucvu: 'CVHT',
+    image: ''
+  })
+  {% endfor %}
+
+
+
+
+  btn_login.addEventListener('click', function (e) {
+    e.preventDefault();
+    check_login(array_user)
+  });
+
+  password.addEventListener('keypress', function (event) {
+    if (event.key == "Enter") {
+      event.preventDefault();
+      check_login(array_user);
+    }
+  })
+  username.addEventListener('keypress', function (event) {
+    if (event.key == "Enter") {
+      event.preventDefault();
+      check_login(array_user);
+    }
+  })
+
+
+  function check_login(array) {
+    var isTrue = false;
+    array.forEach(element => {
+      if (element.username == username.value && element.password == password.value) {
+        document.getElementById('chucvu').value = `${element.chucvu}`
+        document.getElementById('img').value = `${element.image}`
+        document.getElementById('loginForm').method = 'post';
+        document.getElementById('alert').classList.remove('d-none')
+        window.setTimeout(function () {
+          $(".alert").fadeTo(500, 0).slideUp(500, function () {
+            document.getElementById('loginForm').submit();
+
+            $(this).remove();
+          });
+        }, 3000);
+
+        isTrue = true;
+      }
+    });
+    if (isTrue == false) {
+      alert_warning();
+      document.querySelector('#uname-login').value = "";
+      document.querySelector('#pwd-login').value = "";
+
+    }
+  }
+  function alert_warning() {
+    document.querySelector('#alertForm-warning').classList.toggle('d-none');
+    window.setTimeout(function () {
+      $("#alertForm-warning").fadeTo(500, 0).slideUp(500, function () {
+
+        document.querySelector('#alertForm-warning').classList.toggle('d-none');
+      });
+    }, 2000);
+  }
+</script>
+{% endblock %}
+=======
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=Nunito+Sans:300i,400,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css">
+  <title>Login Form</title>
+  <style>
+    body {
+      padding: 0;
+      margin: 0;
+      height: 100vh;
+      font-family: "Nunito Sans";
+    }
+
+    .form-control {
+      line-height: 2;
+    }
+
+    .bg-custom {
+      background-color: #6C63FF;
+    }
+
+    .btn-custom {
+      background-color: #3e3d56;
+      color: #fff;
+    }
+
+    .btn-custom:hover {
+      background-color: #33313f;
+      color: #fff;
+    }
+
+    label {
+      color: #fff;
+    }
+
+    a,
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+
+    a,
+    a:hover {
+      text-decoration: none;
+    }
+
+    @media(max-width: 932px) {
+      .display-none {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- alert -->
+
+  <div class="container-fluid d-none"
+    style="width: 100vw;position: absolute;top: 0;left: 0;height:100vh;background-color:rgba(0, 0, 0, 0.75)"
+    id="alert-success">
+    <div>
+      <div class="alert alert-success alert-dismissible fade show container "
+        style="position: absolute; top:3vh;transform:translateX(-50%);left:50%;animation:normal 2s infinite">
+        <strong>Login Success!</strong> You can continue to use the website.
+        <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close"
+          onclick="document.getElementById('alert-success').classList.toggle('d-none')">&times;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- end alert -->
+
+  <div class="row m-0 h-100">
+    <div class="col p-0 text-center d-flex justify-content-center align-items-center display-none">
+      <img src="../static/images/bg_login.svg" class="w-100">
+    </div>
+    <div class="col p-0 bg-custom d-flex justify-content-center align-items-center flex-column w-100">
+      <form class="w-75" action="{% url 'login' %}" method="post" id="form-login">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label for="validationServer01">Username</label>
+          <input type="text" class="form-control " id="input-username" placeholder="Username" name="Username">
+          <!-- <div class="valid-feedback">
+            Correct!!!
+          </div> -->
+        </div>
+
+        <div class="mb-3">
+          <label for="validationServer02">Password</label>
+          <input type="password" class="form-control " id="input-password" placeholder="Password" name="Password">
+          <!-- <div class="valid-feedback">
+            Correct!!!
+          </div> -->
+        </div>
+        <!-- <div class="row">
+          <div class="col-md-6">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+              <label class="form-check-label" for="flexCheckDefault">
+                Keep me logged in
+              </label>
+            </div>
+          </div>
+        </div> -->
+        <button type="submit" class="btn btn-custom btn-lg btn-block mt-3" id="btn_submit">Login Now</button>
+      </form>
+    </div>
+  </div>
+</body>
+<script>
+  document.querySelector("#input-username").addEventListener("keyup", (e) => {
+    if (e.target.value != null & e.target.value != "" & e.target.value.toString().trim().length > 0) {
+      if (e.target.value.toString().trim().includes(" ")) {
+        if (!e.target.classList.toString().includes("is-invalid")) {
+          e.target.classList.toggle("is-invalid")
+          if (e.target.classList.toString().includes("is-valid")) {
+            e.target.classList.toggle("is-valid")
+          }
+        }
+      }
+      else {
+        if (e.target.classList.toString().includes("is-invalid")) {
+          e.target.classList.toggle("is-invalid")
+          e.target.classList.toggle("is-valid")
+        }
+        if (!e.target.classList.toString().includes("is-valid")) {
+          e.target.classList.toggle("is-valid")
+        }
+      }
+
+    }
+    else {
+      if (!e.target.classList.toString().includes("is-invalid")) {
+        e.target.classList.toggle("is-invalid")
+
+      }
+      if (e.target.classList.toString().includes("is-valid")) {
+        e.target.classList.toggle("is-valid")
+      }
+
+    }
+  })
+
+  document.querySelector("#input-password").addEventListener("keyup", (e) => {
+    if (e.target.value != null & e.target.value != "" & e.target.value.toString().trim().length > 0) {
+      if (e.target.value.toString().trim().includes(" ")) {
+        if (!e.target.classList.toString().includes("is-invalid")) {
+          e.target.classList.toggle("is-invalid")
+          if (e.target.classList.toString().includes("is-valid")) {
+            e.target.classList.toggle("is-valid")
+          }
+        }
+      }
+      else {
+        if (e.target.classList.toString().includes("is-invalid")) {
+          e.target.classList.toggle("is-invalid")
+          e.target.classList.toggle("is-valid")
+        }
+        if (!e.target.classList.toString().includes("is-valid")) {
+          e.target.classList.toggle("is-valid")
+        }
+      }
+
+    }
+    else {
+      if (!e.target.classList.toString().includes("is-invalid")) {
+        e.target.classList.toggle("is-invalid")
+
+      }
+      if (e.target.classList.toString().includes("is-valid")) {
+        e.target.classList.toggle("is-valid")
+      }
+
+    }
+  })
+   let users =[]
+  {% if users %}
+  {% for item in users %}
+    users.push({"username": "{{ item.username}}","password": "{{ item.password}}"})
+  {% endfor %}
+    {% endif %}
+
+  document.querySelector('#btn_submit').addEventListener("click", (e) => {
+    e.preventDefault();
+    var user = document.querySelector('#input-username')
+    var password = document.querySelector('#input-password')
+
+    if (user === null | password === null) {
+      alert("Login failed! Please check your username and password")
+    }
+    else {
+      if (user.value.trim().length > 0 & password.value.trim().length > 0) {
+        let tmp=0;
+        users.forEach((item) => {
+          if (user.value == item.username & password.value == item.password) {
+            document.getElementById('alert-success').classList.toggle("d-none")
+            tmp++;
+          
+          }
+        })
+        if(tmp ==0){
+          alert("Login failed! Please check your username and password")
+        }
+        else{
+          document.querySelector('#form-login').submit()        }
+
+      }
+      else {
+        alert("Login failed! Please check your username and password")
+      }
+    }
+
+
+  })
+</script>
+
+</html>
+>>>>>>> 843860894f1f6e547d14ca5d1c62d731cda7b58f
